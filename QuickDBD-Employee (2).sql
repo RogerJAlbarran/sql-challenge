@@ -32,7 +32,7 @@ CREATE TABLE "dept_emp" (
 
 CREATE TABLE "dept_manager" (
     "dept_no" VARCHAR   NOT NULL,
-    "emp_no" IN   NOT NULL,
+    "emp_no" INT   NOT NULL,
     "from_date" DATE   NOT NULL,
     "to_date" DATE   NOT NULL
 );
