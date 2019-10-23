@@ -1,47 +1,63 @@
-﻿-- Exported from QuickDBD: https://www.quickdatabasediagrams.com/
--- Link to schema: https://app.quickdatabasediagrams.com/#/d/cOinSo
--- NOTE! If you have used non-SQL datatypes in your design, you will have to change these here.
+-- List the following details of each employee: employee number, 
+-- last name, first name, gender, and salary.
+SELECT e.emp_no, e.first_name, e.last_name, e.gender, s.salary
+FROM employees e
+RIGHT JOIN salaries s
+ON (s.emp_no = e.emp_no);
 
+-- List employees who were hired in 1986.
+SELECT e.emp_no, e.first_name, e.last_name, e.hire_date
+FROM employees e
+WHERE EXTRACT (YEAR FROM hire_date) = 1986;
 
-CREATE TABLE "departments" (
-    "dept_no" VARCHAR   NOT NULL,
-    "dept_name" VARCHAR   NOT NULL
-);
+-- List the manager of each department with the following information: 
+-- department number, department name, the manager's employee number, 
+-- last name, first name, and start and end employment dates.
+SELECT Departments.dept_no, Departments.dept_name, Dept_manager.emp_no, 
+employees.first_name, employees.last_name, Dept_manager.from_date, Dept_manager.to_date
+FROM Departments
+RIGHT JOIN Dept_manager
+ON (Departments.dept_no = Dept_manager.dept_no)
+JOIN employees
+ON (Dept_manager.emp_no = employees.emp_no);
 
-CREATE TABLE "employees" (
-    "emp_no" INT   NOT NULL,
-    "birth_date" DATE   NOT NULL,
-    "first_name" VARCHAR   NOT NULL,
-    "last_name" VARCHAR   NOT NULL,
-    "gender" VARCHAR   NOT NULL,
-    "hire_date" DATE   NOT NULL
-);
+-- List the department of each employee with the following information: employee number, 
+-- last name, first name, and department name.
+SELECT employees.emp_no, employees.first_name, employees.last_name, departments.dept_name
+FROM employees
+JOIN dept_emp
+ON (employees.emp_no = dept_emp.emp_no)
+JOIN departments
+ON (dept_emp.dept_no = departments.dept_no);
 
-CREATE TABLE "dept_emp" (
-    "emp_no" INT   NOT NULL,
-    "dept_no" VARCHAR   NOT NULL,
-    "from_date" DATE   NOT NULL,
-    "to_date" DATE   NOT NULL
-);
+-- List all employees whose first name is "Hercules" and last names begin with "B."
+SELECT employees.emp_no, employees.first_name, employees.last_name
+FROM employees
+WHERE first_name = 'Hercules' AND last_name LIKE 'B%';
 
-CREATE TABLE "dept_manager" (
-    "dept_no" VARCHAR   NOT NULL,
-    "emp_no" IN   NOT NULL,
-    "from_date" DATE   NOT NULL,
-    "to_date" DATE   NOT NULL
-);
+-- List all employees in the Sales department, including their employee number, 
+-- last name, first name, and department name.
+SELECT employees.emp_no, employees.first_name, employees.last_name, departments.dept_name
+FROM employees
+JOIN dept_emp
+ON (employees.emp_no = dept_emp.emp_no)
+JOIN departments
+ON (dept_emp.dept_no = departments.dept_no)
+WHERE departments.dept_name = 'Sales';
 
-CREATE TABLE "salaries" (
-    "emp_no" INT   NOT NULL,
-    "salary" FLOAT   NOT NULL,
-    "from_date" DATE   NOT NULL,
-    "to_date" DATE   NOT NULL
-);
+--List all employees in the Sales and Development departments, 
+-- including their employee number, last name, first name, and department name.
+SELECT employees.emp_no, employees.first_name, employees.last_name, departments.dept_name
+FROM employees
+JOIN dept_emp
+ON (employees.emp_no = dept_emp.emp_no)
+JOIN departments
+ON (dept_emp.dept_no = departments.dept_no)
+WHERE departments.dept_name = 'Sales' OR departments.dept_name = 'Development';
 
-CREATE TABLE "titles" (
-    "emp_no" INT   NOT NULL,
-    "title" VARCHAR   NOT NULL,
-    "from_date" DATE   NOT NULL,
-    "to_date" DATE   NOT NULL
-);
-
+-- In descending order, list the frequency count of employee last names, i.e.,
+-- how many employees share each last name.
+SELECT employees.last_name, COUNT(employees.emp_no)
+FROM employees 
+GROUP BY employees.last_name 
+ORDER BY COUNT(employees.emp_no) DESC;
